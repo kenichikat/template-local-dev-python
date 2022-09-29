@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  py-app:
+    build: ./py-app/
+    platform: linux/amd64
+    container_name: py-app
+    restart: always
+    volumes:
+      - ${PWD}/py-app/root/:/home/root/
+      - ${PWD}/py-app/app/:/var/app/
+    ports:
+      - 8000:8000
+    command: tail -f /dev/null
+
+  py-web:
+    depends_on:
+      - py-app
+    image: nginx:1.22
+    platform: linux/amd64
+    container_name: py-web
+    restart: always
+    volumes:
+      - ${PWD}/py-web/root/:/home/root/
+      - ${PWD}/py-web/conf/nginx/:/etc/nginx/
+      - ${PWD}/py-web/html/:/usr/share/nginx/html/
+    ports:
+      - 8080:80
+      - 8443:443
